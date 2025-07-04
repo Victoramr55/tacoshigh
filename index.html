@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tacos High</title>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<!-- FontAwesome -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+/>
+<style>
+  /* Variables de color para modo oscuro y claro */
+  :root {
+    --rojo-intenso: #b32d12;
+    --amarillo-mostaza: #ffb62b;
+    --negro-oscuro: #18191b;
+    --texto-blanco: #ffffff;
+
+    --claro-fondo: #f9f9f9;
+    --claro-texto: #222222;
+    --claro-rojo: #b32d12;
+    --claro-amarillo: #ffb62b;
+  }
+
+  /* Scroll personalizado */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--negro-oscuro);
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--amarillo-mostaza);
+    border-radius: 10px;
+    border: 3px solid var(--negro-oscuro);
+  }
+
+  /* Reset y base */
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    font-weight: 600;
+    background-color: var(--negro-oscuro);
+    color: var(--texto-blanco);
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  a {
+    color: var(--amarillo-mostaza);
+    font-weight: 700;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+  }
+  a:hover {
+    color: var(--rojo-intenso);
+    text-decoration: none;
+  }
+
+  /* Barra superior desplegable al hover */
+  #infoHeader {
+    background-color: var(--rojo-intenso);
+    color: var(--texto-blanco);
+    font-weight: 700;
+    padding: 0.4rem 1rem;
+    font-size: 1rem;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1050;
+    cursor: default;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+    transition: background-color 0.3s ease;
+  }
+
+  #infoHeader:hover #infoContent {
+    max-height: 100px;
+    padding: 0.5rem 1rem;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  #infoContent {
+    background-color: var(--negro-oscuro);
+    color: var(--texto-blanco);
+    font-weight: 600;
+    font-size: 0.95rem;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    border-bottom: 2px solid var(--rojo-intenso);
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+
+  #infoContent a {
+    color: var(--amarillo-mostaza);
+    text-decoration: underline;
+    font-weight: 700;
+  }
+  #infoContent a:hover {
+    color: var(--texto-blanco);
+    text-decoration: none;
+  }
+
+  /* Encabezado principal */
+  header {
+    background-image: url('Portada_Mesa de trabajo 1.png');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    color: var(--texto-blanco);
+    text-shadow: 1px 1px 4px var(--negro-oscuro);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px;
+    margin-top: 2.6rem; /* espacio para barra fija */
+    transition: background-color 0.4s ease;
+  }
+
+  header img {
+    max-width: 500px;
+    width: 100%;
+    height: auto;
+    margin-bottom: 0;
+    filter: drop-shadow(2px 2px 2px var(--negro-oscuro));
+    transition: filter 0.4s ease;
+  }
+
+  section {
+    padding: 3rem 0;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  /* Menú tipo acordeón */
+  .menu-item {
+    background-color: var(--amarillo-mostaza);
+    color: var(--negro-oscuro);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    box-shadow: 0 4px 8px rgb(179 45 18 / 0.4);
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  .menu-item:hover,
+  .menu-item:focus {
+    background-color: #ffaa44;
+    outline: none;
+    transform: scale(1.03);
+  }
+  .menu-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.3rem;
+  }
+  .menu-title i {
+    transition: transform 0.3s ease;
+  }
+  .menu-item.active .menu-title i {
+    transform: rotate(90deg);
+  }
+  .menu-desc {
+    max-height: 0;
+    overflow: hidden;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.4;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+    padding: 0 0;
+    margin-top: 0;
+  }
+  .menu-item.active .menu-desc {
+    max-height: 300px; /* suficiente para el contenido */
+    padding: 1rem 0 0 0;
+    margin-top: 0.5rem;
+  }
+
+  /* Botón WhatsApp flotante */
+  #whatsapp-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--amarillo-mostaza);
+    color: var(--negro-oscuro);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 12px rgb(179 45 18 / 0.6);
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 1100;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+  }
+  #whatsapp-btn:hover {
+    background-color: var(--rojo-intenso);
+    color: var(--texto-blanco);
+    text-decoration: none;
+  }
+
+  /* Icono Facebook fijo arriba derecha */
+  #facebook-btn {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background-color: var(--amarillo-mostaza);
+    color: var(--negro-oscuro);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 12px rgb(179 45 18 / 0.6);
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1100;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+  }
+  #facebook-btn:hover {
+    background-color: var(--rojo-intenso);
+    color: var(--texto-blanco);
+    text-decoration: none;
+  }
+
+  /* Footer */
+  footer {
+    background-color: var(--negro-oscuro);
+    color: var(--amarillo-mostaza);
+    font-weight: 700;
+    padding: 1.5rem 0;
+    text-align: center;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  /* Botón modo claro/oscuro */
+  #theme-toggle {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background-color: var(--amarillo-mostaza);
+    color: var(--negro-oscuro);
+    border: none;
+    padding: 10px 14px;
+    border-radius: 30px;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 1100;
+    box-shadow: 0 4px 12px rgb(179 45 18 / 0.6);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  #theme-toggle:hover {
+    background-color: var(--rojo-intenso);
+    color: var(--texto-blanco);
+  }
+
+  /* Modo claro */
+  body.light-mode {
+    background-color: var(--claro-fondo);
+    color: var(--claro-texto);
+  }
+  body.light-mode header {
+    background-color: var(--claro-fondo);
+    text-shadow: none;
+  }
+  body.light-mode header img {
+    filter: none;
+  }
+  body.light-mode a {
+    color: var(--claro-rojo);
+  }
+  body.light-mode a:hover {
+    color: var(--claro-amarillo);
+  }
+  body.light-mode #infoHeader {
+    background-color: var(--claro-rojo);
+    color: var(--claro-fondo);
+  }
+  body.light-mode #infoContent {
+    background-color: var(--claro-fondo);
+    color: var(--claro-texto);
+    border-bottom: 2px solid var(--claro-rojo);
+  }
+  body.light-mode .menu-item {
+    background-color: var(--claro-amarillo);
+    color: var(--claro-texto);
+    box-shadow: 0 4px 8px rgb(179 45 18 / 0.3);
+  }
+  body.light-mode .menu-item:hover,
+  body.light-mode .menu-item:focus {
+    background-color: #e6b227;
+  }
+  body.light-mode #whatsapp-btn,
+  body.light-mode #facebook-btn {
+    background-color: var(--claro-amarillo);
+    color: var(--claro-texto);
+    box-shadow: 0 4px 12px rgb(179 45 18 / 0.4);
+  }
+  body.light-mode #whatsapp-btn:hover,
+  body.light-mode #facebook-btn:hover {
+    background-color: var(--claro-rojo);
+    color: var(--claro-fondo);
+  }
+  body.light-mode footer {
+    background-color: var(--claro-fondo);
+    color: var(--claro-rojo);
+  }
+
+</style>
+</head>
+<body>
+
+<!-- Barra superior desplegable al pasar cursor -->
+<div id="infoHeader" role="banner" aria-label="Información de contacto">
+  Dirección y Teléfono (pasa el cursor para ver)
+  <div id="infoContent" role="region" aria-live="polite">
+    Crisóforo Canseco #861, Col. Echeverría, Guadalajara, Jalisco, México — Ordena y recoge: <a href="tel:3335931498">3335931498</a>
+  </div>
+</div>
+
+<!-- Botón modo claro/oscuro -->
+<button id="theme-toggle" aria-label="Cambiar modo claro y oscuro" title="Cambiar modo claro y oscuro">
+  <i class="fas fa-moon"></i>
+</button>
+
+<!-- Icono Facebook -->
+<a
+  id="facebook-btn"
+  href="https://www.facebook.com/profile.php?id=61577907966997"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Visita nuestra página de Facebook"
+>
+  <i class="fab fa-facebook-f"></i>
+</a>
+
+<!-- Botón WhatsApp flotante -->
+<a
+  id="whatsapp-btn"
+  href="https://wa.me/523335931498"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Haz tu pedido por WhatsApp"
+>
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- Encabezado principal -->
+<header role="main">
+  <img src="Logos.png" alt="Logo Tacos High" />
+</header>
+
+<!-- Menú tipo acordeón -->
+<section class="text-center" aria-label="Menú principal">
+  <div class="container">
+    <h2 class="mb-4">Nuestro Menú</h2>
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-5">
+        <div class="menu-item" tabindex="0" role="button" aria-expanded="false" aria-controls="desc-tacos" id="menu-tacos">
+          <div class="menu-title">
+            Tacos de Guiso
+            <i class="fas fa-chevron-right"></i>
+          </div>
+          <div class="menu-desc" id="desc-tacos" aria-hidden="true">
+            <strong>Variedades:</strong><br>
+            • Chicharrón Seco<br>
+            • Chicharrón Guisado<br>
+            • Papas con chorizo<br>
+            • Costilla con nopales<br>
+            • Huevo en salsa<br>
+            • Lengua en salsa verde<br><br>
+            <strong>Precio:</strong> 15 pesos por taco
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-5">
+        <div class="menu-item" tabindex="0" role="button" aria-expanded="false" aria-controls="desc-aguas" id="menu-aguas">
+          <div class="menu-title">
+            Aguas Frescas
+            <i class="fas fa-chevron-right"></i>
+          </div>
+          <div class="menu-desc" id="desc-aguas" aria-hidden="true">
+            Limón con chía y crema de coco<br><br>
+            <strong>Precios:</strong><br>
+            • 15 pesos (medio litro)<br>
+            • 25 pesos (litro)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sobre Nosotros -->
+<section class="text-center" aria-label="Sobre nosotros">
+  <div class="container">
+    <h2 class="mb-4">¿Quiénes somos?</h2>
+    <p class="lead">
+      En Tacos High llevamos el sabor de la cocina tradicional mexicana al corazón de Guadalajara. Con ingredientes frescos y sazón casero, te garantizamos un bocado lleno de historia y pasión.
+    </p>
+  </div>
+</section>
+
+<!-- Ubicación -->
+<section class="text-center" aria-label="Ubicación">
+  <div class="container">
+    <h2 class="mb-4">¿Dónde estamos?</h2>
+    <p>Crisóforo Canseco #861, Col. Echeverría, Guadalajara, Jalisco</p>
+    <div class="ratio ratio-16x9">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d238977.61943329553!2d-103.66310060546876!3d20.62782540000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8428b30e77a26741%3A0x4956d482b6fcabdd!2sTacos%20High%20-%20Tacos%20y%20Guisados!5e0!3m2!1ses!2smx!4v1751607831028!5m2!1ses!2smx"
+        frameborder="0"
+        allowfullscreen
+        aria-label="Mapa de ubicación"
+      ></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>&copy; 2025 Tacos High. Todos los derechos reservados.</p>
+</footer>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Script para acordeón menú desplegable al hacer click o enter/space en teclado
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const isActive = item.classList.contains('active');
+
+      // Cerrar todos primero
+      document.querySelectorAll('.menu-item').forEach(i => {
+        i.classList.remove('active');
+        i.setAttribute('aria-expanded', 'false');
+        i.querySelector('.menu-desc').setAttribute('aria-hidden', 'true');
+      });
+
+      // Si no estaba activo, abrir el clickeado
+      if (!isActive) {
+        item.classList.add('active');
+        item.setAttribute('aria-expanded', 'true');
+        item.querySelector('.menu-desc').setAttribute('aria-hidden', 'false');
+      }
+    });
+
+    // Soporte teclado (Enter y Space)
+    item.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        item.click();
+      }
+    });
+  });
+
+  // Modo claro/oscuro persistente con localStorage
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  function setTheme(mode) {
+    if (mode === 'light') {
+      document.body.classList.add('light-mode');
+      themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.body.classList.remove('light-mode');
+      themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+      localStorage.setItem('theme', 'dark');
+    }
+  }
+
+  // Al cargar la página, aplica el tema guardado o por defecto
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    setTheme(savedTheme);
+  } else {
+    setTheme(prefersDark ? 'dark' : 'light');
+  }
+
+  themeToggleBtn.addEventListener('click', () => {
+    if (document.body.classList.contains('light-mode')) {
+      setTheme('dark');
+    } else {
+      setTheme('light');
+    }
+  });
+</script>
+</body>
+</html>
+
